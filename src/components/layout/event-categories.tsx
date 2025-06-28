@@ -217,11 +217,16 @@ export default function EventCategories() {
             <EventCard
               id={event.id}
               key={event.id}
-              image={event.picture}
+              picture={event.picture}
               title={event.title}
               description={event.description}
-              price={`Rp${event.price.toLocaleString("id-ID")}`}
+              price={event.price}
               location={event.location}
+              organizer={{
+                name: event.organizer.name,
+                email: event.organizer.email,
+                profilePicture: event.organizer.profilePicture,
+              }}
             />
           ))
         )}

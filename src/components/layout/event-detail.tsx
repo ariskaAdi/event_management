@@ -74,7 +74,7 @@ const EventDetail = ({ event }: EventDetailProps) => {
           {/* Description */}
           <div>
             <h3 className="text-lg font-semibold mb-2">Capacity</h3>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-2">
               <Users size={16} className="text-amber-500" />
               <p className="text-gray-700 leading-relaxed">{event.seats}</p>
             </div>

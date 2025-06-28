@@ -68,7 +68,7 @@ export function Header() {
             Contact
           </Link>
           <Link
-            href="/contact"
+            href="/manage"
             className="text-sm font-medium text-white hover:text-white/80">
             Manage Events
           </Link>
