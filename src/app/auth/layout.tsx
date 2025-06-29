@@ -2,7 +2,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../../app/globals.css";
-import Sidebar from "@/components/atoms/dashboard";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,11 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Profile Page",
-  description: "Your profile settings and details",
+  title: "Auth Page",
+  description: "Auth Page",
 };
 
-export default function ProfileLayout({
+export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -29,7 +28,6 @@ export default function ProfileLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <div className="flex min-h-screen flex-row bg-gray-50">
-          <Sidebar />
           <main className="flex-1">{children}</main>
         </div>
       </body>

@@ -75,7 +75,7 @@ export function Header() {
           <Button
             className="bg-white text-black hover:backdrop-blur-2xl hover:text-white hover:bg-white/20"
             asChild>
-            <Link href="/signIn">Sign In</Link>
+            <Link href="/auth/login">Sign In</Link>
           </Button>
         </div>
 
