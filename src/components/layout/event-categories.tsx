@@ -231,6 +231,7 @@ export default function EventCategories() {
               endDate={event.endDate}
               seats={event.seats}
               category={event.category}
+              organizerId={event.organizerId}
             />
           ))
         )}

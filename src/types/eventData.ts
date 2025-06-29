@@ -14,6 +14,7 @@ export interface EventData {
   endDate: string;
   seats: number;
   category: string;
+  organizerId: number;
 }
 
 export interface EventDetailProps {
