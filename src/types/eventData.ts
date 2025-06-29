@@ -10,6 +10,10 @@ export interface EventData {
     email: string;
     profilePicture?: string | null;
   };
+  startDate: string;
+  endDate: string;
+  seats: number;
+  category: string;
 }
 
 export interface EventDetailProps {
@@ -22,19 +26,5 @@ export interface EventDetailProps {
     startDate: string;
     endDate: string;
     seats: number;
-  };
-}
-
-export interface EventCardProps {
-  id: number;
-  image: string;
-  title: string;
-  description: string;
-  price: string;
-  location: string;
-  organizer: {
-    name: string;
-    email: string;
-    profilePicture?: string | null;
   };
 }

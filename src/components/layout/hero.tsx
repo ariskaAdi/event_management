@@ -10,7 +10,7 @@ export function HeroSection() {
         <div className="flex-1 flex flex-col justify-center text-center">
           <h1 className="text-white text-4xl md:text-6xl font-bold leading-tight mb-4">
             Manage Events. Sell Tickets. <br className=" md:block" />
-            <span className="text-amber-400">Flow Seamlessly.</span>
+            <span className="text-amber-400 ">Flow Seamlessly.</span>
           </h1>
 
           <p className="text-white text-lg italic leading-relaxed max-w-xl mx-auto ">

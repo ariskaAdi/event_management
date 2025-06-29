@@ -1,5 +1,3 @@
-// import { RoomsList } from "@/components/layout/rooms.list";
-
 import EventCategories from "@/components/layout/event-categories";
 import { HeroSection } from "@/components/layout/hero";
 

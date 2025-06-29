@@ -227,6 +227,10 @@ export default function EventCategories() {
                 email: event.organizer.email,
                 profilePicture: event.organizer.profilePicture,
               }}
+              startDate={event.startDate}
+              endDate={event.endDate}
+              seats={event.seats}
+              category={event.category}
             />
           ))
         )}

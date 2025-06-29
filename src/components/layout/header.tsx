@@ -2,33 +2,34 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-// import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
 import { Menu, X, Facebook, Twitter, Linkedin } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-
 import { Button } from "../ui/button";
-// import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+
+const navLinks = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Category", href: "/rooms" },
+  { label: "Contact", href: "/contact" },
+];
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const pathname = usePathname();
 
-  // Handle scroll effect for transparent header
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu when switching to desktop view
   useEffect(() => {
-    if (!isMobile) {
-      setIsMenuOpen(false);
-    }
+    if (!isMobile) setIsMenuOpen(false);
   }, [isMobile]);
 
   return (
@@ -47,48 +48,34 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link
-            href="/"
-            className="text-sm font-medium text-white hover:text-white/80">
-            Home
-          </Link>
-          <Link
-            href="/about"
-            className="text-sm font-medium text-white hover:text-white/80">
-            About
-          </Link>
-          <Link
-            href="/rooms"
-            className="text-sm font-medium text-white hover:text-white/80">
-            Category
-          </Link>
-          <Link
-            href="/contact"
-            className="text-sm font-medium text-white hover:text-white/80">
-            Contact
-          </Link>
-          <Link
-            href="/manage"
-            className="text-sm font-medium text-white hover:text-white/80">
-            Manage Events
-          </Link>
+          {navLinks.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`text-sm font-medium transition-colors ${
+                pathname === href
+                  ? "text-white underline underline-offset-4"
+                  : "text-white hover:text-white/80"
+              }`}>
+              {label}
+            </Link>
+          ))}
         </div>
 
-        {/* Desktop Social Icons */}
+        {/* Desktop Icons */}
         <div className="hidden md:flex items-center space-x-4">
-          <Link href="#" className="text-sm text-white hover:text-white/80">
-            <Facebook className="h-4 w-4" />
-          </Link>
-          <Link href="#" className="text-sm text-white hover:text-white/80">
-            <Twitter className="h-4 w-4" />
-          </Link>
-          <Link href="#" className="text-sm text-white hover:text-white/80">
-            <Linkedin className="h-4 w-4" />
-          </Link>
+          {[Facebook, Twitter, Linkedin].map((Icon, i) => (
+            <Link
+              key={i}
+              href="#"
+              className="text-sm text-white hover:text-white/80">
+              <Icon className="h-4 w-4" />
+            </Link>
+          ))}
           <Button
             className="bg-white text-black hover:backdrop-blur-2xl hover:text-white hover:bg-white/20"
             asChild>
-            <Link href="signIn">Sign In</Link>
+            <Link href="/signIn">Sign In</Link>
           </Button>
         </div>
 
@@ -112,62 +99,35 @@ export function Header() {
         } md:hidden pt-20`}>
         <div className="container mx-auto px-4 py-8 flex flex-col h-full">
           <div className="flex flex-col space-y-6 text-center">
-            <Link
-              href="#"
-              className="text-lg font-medium text-white py-2 border-b border-white/10"
-              onClick={() => setIsMenuOpen(false)}>
-              About
-            </Link>
-            <Link
-              href="#"
-              className="text-lg font-medium text-white py-2 border-b border-white/10"
-              onClick={() => setIsMenuOpen(false)}>
-              Rooms
-            </Link>
-            <Link
-              href="#"
-              className="text-lg font-medium text-white py-2 border-b border-white/10"
-              onClick={() => setIsMenuOpen(false)}>
-              Reservation
-            </Link>
-            <Link
-              href="#"
-              className="text-lg font-medium text-white py-2 border-b border-white/10"
-              onClick={() => setIsMenuOpen(false)}>
-              News & Events
-            </Link>
-            <Link
-              href="#"
-              className="text-lg font-medium text-white py-2 border-b border-white/10"
-              onClick={() => setIsMenuOpen(false)}>
-              Contact
-            </Link>
+            {navLinks.map(({ href, label }) => (
+              <Link
+                key={href}
+                href={href}
+                className={`text-lg font-medium py-2 border-b border-white/10 ${
+                  pathname === href ? "text-white font-bold" : "text-white"
+                }`}
+                onClick={() => setIsMenuOpen(false)}>
+                {label}
+              </Link>
+            ))}
           </div>
 
-          <div className="mt-8">
-            <div className="flex items-center justify-center space-x-4 mb-4">
-              <div className="flex items-center text-white">
-                <Button
-                  className="bg-white text-black hover:backdrop-blur-2xl hover:text-white hover:bg-white/20 "
-                  asChild>
-                  <Link href="signIn">Sign In</Link>
-                </Button>
-              </div>
-            </div>
+          <div className="mt-8 flex items-center justify-center space-x-4 mb-4">
+            <Button
+              className="bg-white text-black hover:backdrop-blur-2xl hover:text-white hover:bg-white/20"
+              asChild>
+              <Link href="/signIn" onClick={() => setIsMenuOpen(false)}>
+                Sign In
+              </Link>
+            </Button>
           </div>
 
-          <div className="mt-auto">
-            <div className="flex justify-center space-x-6">
-              <Link href="#" className="text-white hover:text-white/80">
-                <Facebook className="h-5 w-5" />
+          <div className="mt-auto flex justify-center space-x-6">
+            {[Facebook, Twitter, Linkedin].map((Icon, i) => (
+              <Link key={i} href="#" className="text-white hover:text-white/80">
+                <Icon className="h-5 w-5" />
               </Link>
-              <Link href="#" className="text-white hover:text-white/80">
-                <Twitter className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="text-white hover:text-white/80">
-                <Linkedin className="h-5 w-5" />
-              </Link>
-            </div>
+            ))}
           </div>
         </div>
       </div>

@@ -42,7 +42,7 @@ const CreateForm = () => {
         }
       );
       console.log("Success:", res.data);
-      router.push("/manage");
+      router.push("/dashboard/manage");
     } catch (error) {
       console.log(error);
     } finally {
@@ -203,7 +203,7 @@ const CreateForm = () => {
 
         {/* Submit */}
         <Button
-          className="w-full text-white rounded-md py-2 transition"
+          className="w-full text-white rounded-md py-2 transition  cursor-pointer"
           type="submit"
           disabled={isPending}>
           {isPending ? "Creating..." : "Create Event"}
