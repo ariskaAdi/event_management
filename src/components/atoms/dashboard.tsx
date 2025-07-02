@@ -34,9 +34,13 @@ export default function Sidebar() {
     <>
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex w-20 bg-white shadow-sm flex-col items-center py-6 space-y-8">
-        <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
-          <ArrowLeft className="w-5 h-5 text-white" />
-        </div>
+        <Link href="/">
+          <Button
+            className=" bg-orange-500 rounded-lg flex items-center justify-center"
+            asChild>
+            <ArrowLeft className="w-12 h-12 text-white" />
+          </Button>
+        </Link>
         <nav className="flex flex-col space-y-6">
           {sidebarItems.map((item, index) => {
             const isActive = pathname.startsWith(item.href);

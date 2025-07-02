@@ -120,18 +120,6 @@ const EventDetail = ({ event }: EventDetailProps) => {
                 </p>
               </div>
             </div>
-            {/* <div className="flex gap-2">
-              <Button
-                variant="outline"
-                className="flex items-center gap-2 bg-transparent">
-                <Phone className="h-4 w-4" />
-                Call now
-              </Button>
-              <Button className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                Email
-              </Button>
-            </div> */}
           </div>
         </div>
       </div>

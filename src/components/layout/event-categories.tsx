@@ -207,12 +207,10 @@ export default function EventCategories() {
             <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : events.length === 0 ? (
-          // Jika tidak ada data tampilkan pesan
           <p className="col-span-3 text-center text-gray-400">
             No events found in this category.
           </p>
         ) : (
-          // Jika ada data tampilkan cards
           events.map((event) => (
             <EventCard
               id={event.id}

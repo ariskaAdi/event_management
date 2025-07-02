@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Facebook, Twitter, Linkedin } from "lucide-react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "../ui/button";
+import AvatarProfile from "../profile/avatar-profile";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -17,8 +18,14 @@ const navLinks = [
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const pathname = usePathname();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,23 +67,40 @@ export function Header() {
               {label}
             </Link>
           ))}
+          {isLoggedIn && (
+            <Link
+              href="/tickets"
+              className={`text-sm font-medium transition-colors ${
+                pathname === "/payment"
+                  ? "text-white underline underline-offset-4"
+                  : "text-white hover:text-white/80"
+              }`}>
+              My Tickets
+            </Link>
+          )}
         </div>
 
         {/* Desktop Icons */}
         <div className="hidden md:flex items-center space-x-4">
-          {[Facebook, Twitter, Linkedin].map((Icon, i) => (
-            <Link
-              key={i}
-              href="#"
-              className="text-sm text-white hover:text-white/80">
-              <Icon className="h-4 w-4" />
-            </Link>
-          ))}
-          <Button
-            className="bg-white text-black hover:backdrop-blur-2xl hover:text-white hover:bg-white/20"
-            asChild>
-            <Link href="/auth/login">Sign In</Link>
-          </Button>
+          {isLoggedIn ? (
+            <AvatarProfile />
+          ) : (
+            <>
+              {[Facebook, Twitter, Linkedin].map((Icon, i) => (
+                <Link
+                  key={i}
+                  href="#"
+                  className="text-sm text-white hover:text-white/80">
+                  <Icon className="h-4 w-4" />
+                </Link>
+              ))}
+              <Button
+                className="bg-white text-black hover:backdrop-blur-2xl hover:text-white hover:bg-white/20"
+                asChild>
+                <Link href="/auth/login">Sign In</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}

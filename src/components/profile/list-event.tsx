@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { DeleteEventButton } from "./button-action";
+import LoadingSpinner from "../atoms/loading-spinner";
 
 const ListEvent = () => {
   const [events, setEvents] = useState<EventData[]>([]);
@@ -31,11 +32,7 @@ const ListEvent = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="col-span-3 flex justify-center items-center h-60">
-        <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
