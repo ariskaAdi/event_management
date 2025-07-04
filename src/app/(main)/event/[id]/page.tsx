@@ -1,12 +1,15 @@
 import EventDetail from "@/components/layout/event-detail";
+import axios from "axios";
 
 const getEventById = async ({ params }: { params: { id: string } }) => {
-  const { id } = await params;
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/event/${id}`, {
-    cache: "no-store", // atau gunakan revalidate kalau mau ISR
-  });
-  if (!res.ok) throw new Error("Failed to fetch event");
-  return res.json();
+  try {
+    const { id } = await params;
+    const res = await axios(`${process.env.NEXT_PUBLIC_API_URL}/event/${id}`);
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export default async function EventDetailPage({
@@ -15,7 +18,7 @@ export default async function EventDetailPage({
   params: { id: string };
 }) {
   const data = await getEventById({ params });
-  const event = data.event;
+  const event = data?.event;
 
   return (
     <main className="min-h-screen flex flex-col">

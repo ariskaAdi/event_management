@@ -19,6 +19,7 @@ export interface EventData {
 
 export interface EventDetailProps {
   event: {
+    id: number;
     title: string;
     description: string;
     picture: string;
@@ -27,5 +28,12 @@ export interface EventDetailProps {
     startDate: string;
     endDate: string;
     seats: number;
+    organizer: {
+      name: string;
+      email: string;
+      profilePicture?: string | null;
+      bio?: string | null;
+      role: string;
+    };
   };
 }

@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "../ui/button";
 import { Heart, MapPin, Share2, Users } from "lucide-react";
 import { EventDetailProps } from "@/types/eventData";
+import Link from "next/link";
 
 const EventDetail = ({ event }: EventDetailProps) => {
   if (!event) {
@@ -93,8 +94,10 @@ const EventDetail = ({ event }: EventDetailProps) => {
             </div>
           </div>
           <div className="mt-auto space-y-4">
-            <Button className="w-full rounded-4xl cursor-pointer h-16 text-2xl ">
-              Buy Tickets
+            <Button
+              className="w-full rounded-4xl cursor-pointer h-16 text-2xl "
+              asChild>
+              <Link href={`/transaction/${event.id}`}>Buy Tickets</Link>
             </Button>
           </div>
         </div>
@@ -109,14 +112,12 @@ const EventDetail = ({ event }: EventDetailProps) => {
                 <span className="text-blue-600 font-bold text-lg">BM</span>
               </div>
               <div>
-                <h4 className="font-semibold text-lg">
-                  Brandon Mill Subdivision
+                <h4 className="font-semibold text-lg uppercase">
+                  {event.organizer.role}
                 </h4>
-                <p className="text-gray-600">Licensed Real Estate Agent</p>
+                <p className="text-gray-600">{event.organizer.name}</p>
                 <p className="text-sm text-gray-500 mt-1">
-                  Brandon Mill Subdivision is a company full of professional
-                  staff. You can always rely on us. Call us anytime if you would
-                  like to book viewing for any apartment.
+                  {event.organizer.bio}
                 </p>
               </div>
             </div>
