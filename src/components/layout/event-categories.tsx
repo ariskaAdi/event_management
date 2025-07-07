@@ -17,6 +17,7 @@ import {
 import { EventCard } from "./event-card";
 import { EventData } from "@/types/eventData";
 import axios from "axios";
+import { useRouter, useSearchParams } from "next/navigation";
 
 enum EventCategory {
   ALL = "ALL",
@@ -79,11 +80,29 @@ const categoryConfig = {
 };
 
 export default function EventCategories() {
-  const [selectedCategory, setSelectedCategory] = useState<EventCategory>(
-    EventCategory.ALL
-  );
+  const searchParams = useSearchParams();
+  const initialCategory =
+    (searchParams.get("category") as EventCategory) || EventCategory.ALL;
+  const [selectedCategory, setSelectedCategory] =
+    useState<EventCategory>(initialCategory);
   const [events, setEvents] = useState<EventData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleCategoryChange = (category: EventCategory) => {
+    if (category === selectedCategory) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    if (category === EventCategory.ALL) {
+      params.delete("category");
+    } else {
+      params.set("category", category);
+    }
+
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    router.push(newUrl); // ubah URL tanpa reload
+    setSelectedCategory(category);
+  };
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -160,7 +179,7 @@ export default function EventCategories() {
             return (
               <button
                 key={category}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => handleCategoryChange(category)}
                 className={`
                  flex-shrink-0 w-24 h-24 md:w-32 md:h-32 p-3 md:p-4 rounded-xl md:rounded-2xl 
                 transition-all duration-200 hover:scale-105
