@@ -132,9 +132,9 @@ export function Footer() {
 
         <div className="mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <div className="text-2xl font-bold tracking-tight">ROVERO</div>
+            <div className="text-2xl font-bold tracking-tight">TixFlow</div>
             <div className="text-xs text-gray-400 mt-1">
-              Designed by Jewel Khan © 2019
+              Designed by Ariska Adi Prasetyo &copy; {new Date().getFullYear()}
             </div>
           </div>
 

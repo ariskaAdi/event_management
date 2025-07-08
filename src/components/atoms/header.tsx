@@ -69,13 +69,13 @@ export function Header() {
           ))}
           {isLoggedIn && (
             <Link
-              href="/tickets"
+              href="/payment"
               className={`text-sm font-medium transition-colors ${
                 pathname === "/payment"
                   ? "text-white underline underline-offset-4"
                   : "text-white hover:text-white/80"
               }`}>
-              My Tickets
+              My Payment
             </Link>
           )}
         </div>
