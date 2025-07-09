@@ -20,7 +20,7 @@ const ListEvent = () => {
         setLoading(true);
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/event`);
         console.log(res.data);
-        setEvents(res.data.events);
+        setEvents(res.data.result);
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch events:", error);

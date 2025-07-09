@@ -1,6 +1,10 @@
 import TransactionStatus from "@/components/layout/tx-status-card";
+import { Metadata } from "next";
 import React from "react";
 
+export const metadata: Metadata = {
+  title: "My Payment | TixFlow",
+};
 const PaymentPage = () => {
   return (
     <main className="min-h-screen flex flex-col">

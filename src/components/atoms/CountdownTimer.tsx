@@ -18,10 +18,11 @@ const CountdownTimer = ({ expiredAt }: Props) => {
         return;
       }
 
-      const minutes = Math.floor(diff / 1000 / 60);
+      const hours = Math.floor(diff / 1000 / 60 / 60);
+      const minutes = Math.floor((diff / 1000 / 60) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
 
-      setTimeLeft(`${minutes}m ${seconds}s`);
+      setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
     }, 1000);
 
     return () => clearInterval(interval);

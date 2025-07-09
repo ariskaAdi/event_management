@@ -18,6 +18,8 @@ import { EventCard } from "./event-card";
 import { EventData } from "@/types/eventData";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "../ui/button";
+import Image from "next/image";
 
 enum EventCategory {
   ALL = "ALL",
@@ -80,15 +82,22 @@ const categoryConfig = {
 };
 
 export default function EventCategories() {
+  // diginakan untuk mebaca query yang diberikan
   const searchParams = useSearchParams();
+  // jika tdak ada query, maka defaultnya akan mengambil all
   const initialCategory =
     (searchParams.get("category") as EventCategory) || EventCategory.ALL;
-  const [selectedCategory, setSelectedCategory] =
-    useState<EventCategory>(initialCategory);
-  const [events, setEvents] = useState<EventData[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
 
+  // state setup yang digunakan untuk memilih kategori
+  const [selectedCategory, setSelectedCategory] =
+    useState<EventCategory>(initialCategory); // state kategory saat ini
+  const [events, setEvents] = useState<EventData[]>([]); //daftar event yang akan ditampilkan
+  const [isLoading, setIsLoading] = useState(false);
+  // untuk merender hanya 6 event di awal page
+  const [visibleCount, setVisibleCount] = useState(6);
+  const router = useRouter(); //digunakan untuk memanipulasi URL
+
+  // fungsi untuk mengubah kategori
   const handleCategoryChange = (category: EventCategory) => {
     if (category === selectedCategory) return;
 
@@ -104,6 +113,7 @@ export default function EventCategories() {
     setSelectedCategory(category);
   };
 
+  // fungsi untuk scroll
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollLeft = () => {
@@ -118,6 +128,8 @@ export default function EventCategories() {
     }
   };
 
+  // fungsi untuk mengambil data dari backend
+  // jika all tidak mengirimkan query
   const fetchEvents = async () => {
     setIsLoading(true);
     try {
@@ -132,7 +144,7 @@ export default function EventCategories() {
 
       console.log(res.data);
 
-      setEvents(res.data.events);
+      setEvents(res.data.result);
     } catch (error) {
       console.error("Failed to fetch events", error);
       setEvents([]);
@@ -141,8 +153,10 @@ export default function EventCategories() {
     }
   };
 
+  // Trigger Fetch saat Kategori Berubah
   useEffect(() => {
     fetchEvents();
+    setVisibleCount(6);
   }, [selectedCategory]);
 
   return (
@@ -226,11 +240,21 @@ export default function EventCategories() {
             <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : events.length === 0 ? (
-          <p className="col-span-3 text-center text-gray-400">
-            No events found in this category.
-          </p>
+          <div className="col-span-3 flex flex-col justify-center items-center h-60 gap-y-4 text-center">
+            <Image
+              src="/undraw_cancel.svg"
+              alt="No events"
+              width={0}
+              height={0}
+              sizes="(min-width: 768px) 160px, 96px"
+              className="w-24 md:w-40 h-auto opacity-80"
+            />
+            <p className="text-gray-400 text-sm md:text-base">
+              No events found in this category.
+            </p>
+          </div>
         ) : (
-          events.map((event) => (
+          events.slice(0, visibleCount).map((event) => (
             <EventCard
               id={event.id}
               key={event.id}
@@ -240,9 +264,9 @@ export default function EventCategories() {
               price={event.price}
               location={event.location}
               organizer={{
-                name: event.organizer.name,
-                email: event.organizer.email,
-                profilePicture: event.organizer.profilePicture,
+                name: event.organizer.name || "Unknown",
+                email: event.organizer.email || "Unknown",
+                profilePicture: event.organizer.profilePicture || "",
               }}
               startDate={event.startDate}
               endDate={event.endDate}
@@ -254,6 +278,14 @@ export default function EventCategories() {
         )}
       </div>
 
+      <div className="flex justify-center items-center mt-8">
+        {visibleCount < events.length && (
+          <Button onClick={() => setVisibleCount((prev) => prev + 6)}>
+            Load More
+          </Button>
+        )}
+      </div>
+      {/*  cara di Next.js untuk menulis CSS khusus yang hanya berlaku lokal di komponen itu saja (scoped style). */}
       <style jsx>{`
         .scrollbar-hide::-webkit-scrollbar {
           display: none;

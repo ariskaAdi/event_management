@@ -11,7 +11,7 @@ import AvatarProfile from "../profile/avatar-profile";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Category", href: "/rooms" },
+  { label: "Category", href: "/#EventCategory" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -23,8 +23,36 @@ export function Header() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    const checkUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return setIsLoggedIn(false);
+
+      try {
+        const res = await fetch("http://localhost:4000/user/profile/get/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          // Jika user not found atau token invalid
+          throw new Error("Unauthorized");
+        }
+
+        const data = await res.json();
+        if (data?.user) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      } catch (err) {
+        console.error("User not found or token expired:", err);
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkUser();
   }, []);
 
   useEffect(() => {

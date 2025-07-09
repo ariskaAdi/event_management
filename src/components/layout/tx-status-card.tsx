@@ -6,11 +6,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Clock, XCircle, Ban, CheckCircle, AlertTriangle } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ITransaction, ITransactionStatus } from "@/types/transaction";
 import CountdownTimer from "../atoms/CountdownTimer";
+import UploadPaymentProofForm from "./UploadPaymentProofForm";
 
 const statusConfig = {
   WAITING_PAYMENT: { label: "Waiting Payment", icon: Clock, color: "yellow" },
@@ -73,7 +73,10 @@ export default function TransactionStatus() {
   return (
     <div className="w-full max-w-8xl mx-auto p-8">
       <Tabs
-        value={status}
+        value={
+          (searchParams.get("status") as ITransactionStatus) ||
+          "WAITING_PAYMENT"
+        }
         onValueChange={(val) => handleStatusChange(val as ITransactionStatus)}>
         <TabsList className="grid grid-cols-6 w-full mb-4">
           {Object.entries(statusConfig).map(([key, conf]) => (
@@ -174,8 +177,13 @@ export default function TransactionStatus() {
                   </div>
                 </div>
                 <Separator />
-                <div className="text-end">
-                  <Button>Download Receipt</Button>
+                <div className="flex justify-end">
+                  {current.status === "WAITING_PAYMENT" ? (
+                    <UploadPaymentProofForm
+                      transactionId={current.id}
+                      onSuccess={() => fetchTransactions(status)} // refresh data
+                    />
+                  ) : null}
                 </div>
               </CardContent>
             </Card>

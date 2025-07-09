@@ -24,6 +24,7 @@ export function EventCard({
           width={600}
           height={300}
           className="h-48 w-full object-cover"
+          priority
         />
 
         <div className="p-4 flex flex-col flex-grow">

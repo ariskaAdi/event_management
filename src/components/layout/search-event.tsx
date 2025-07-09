@@ -22,7 +22,7 @@ const SearchEvent = () => {
       const res = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/event${query}`
       );
-      setResults(res.data.events);
+      setResults(res.data.result);
     } catch (error) {
       console.error("Error fetching:", error);
       setResults([]);

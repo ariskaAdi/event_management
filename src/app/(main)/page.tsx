@@ -1,4 +1,5 @@
 import EventCategories from "@/components/layout/event-categories";
+import EventServicesSection from "@/components/layout/event-services-section";
 import { HeroSection } from "@/components/layout/hero";
 
 export default function Home() {
@@ -6,9 +7,12 @@ export default function Home() {
     <main className="min-h-screen flex flex-col">
       <HeroSection />
 
-      <div className="p-4 bg-gray-50">
+      <section className="p-4 bg-gray-50" id="EventCategory">
         <EventCategories />
-      </div>
+      </section>
+      <section className="p-4 bg-gray-50 ">
+        <EventServicesSection />
+      </section>
     </main>
   );
 }

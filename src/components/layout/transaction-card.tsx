@@ -7,8 +7,10 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { EventDetailProps } from "@/types/eventData";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function TransactionCard({ event }: EventDetailProps) {
+  const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -51,6 +53,7 @@ export default function TransactionCard({ event }: EventDetailProps) {
       );
       console.log("Payment successful!");
       alert("Payment successful!");
+      router.push("/payment");
     } catch (err) {
       console.error(err);
       setError("Failed to complete payment.");
@@ -138,7 +141,7 @@ export default function TransactionCard({ event }: EventDetailProps) {
                       <Button
                         disabled={isSubmitting}
                         onClick={handleSubmit}
-                        className="w-full h-14 text-xl bg-purple-500 hover:bg-purple-600 text-white py-3 mt-6">
+                        className="w-full h-14 text-xl bg-purple-500 hover:bg-purple-600 text-white py-3 mt-6 cursor-pointer">
                         {isSubmitting ? "Processing..." : "Pay now"}
                       </Button>
                     </div>
