@@ -1,7 +1,8 @@
-// app/profile/layout.tsx
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "../../app/globals.css";
+import "../globals.css";
+import { Footer } from "@/components/atoms/footer";
+import { AuthHeader } from "@/components/atoms/auth-header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,22 +15,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Auth Page",
-  description: "Auth Page",
+  title: "Auth | TixFlow",
+  description: "Event Ticketing Platform",
 };
 
-export default function AuthLayout({
+export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <div className="flex min-h-screen flex-row bg-gray-50">
-          <main className="flex-1">{children}</main>
-        </div>
+        <AuthHeader />
+        {children}
+        <Footer />
       </body>
     </html>
   );

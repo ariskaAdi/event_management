@@ -11,7 +11,7 @@ import AvatarProfile from "../profile/avatar-profile";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Category", href: "/#EventCategory" },
+  { label: "Events", href: "/#EventCategory" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -125,7 +125,7 @@ export function Header() {
               <Button
                 className="bg-white text-black hover:backdrop-blur-2xl hover:text-white hover:bg-white/20"
                 asChild>
-                <Link href="/auth/login">Sign In</Link>
+                <Link href="/auth/signIn">Sign In</Link>
               </Button>
             </>
           )}

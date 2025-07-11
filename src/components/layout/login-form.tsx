@@ -109,12 +109,12 @@ const LoginForm = () => {
 
       <div className="mt-6">
         <div className="relative">
-          <div className="absolute inset-0 flex items-center">
+          {/* <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-200"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
+          </div> */}
+          {/* <div className="relative flex justify-center text-sm">
             <span className="px-4 bg-white text-gray-500">Or Sign In With</span>
-          </div>
+          </div> */}
         </div>
 
         {/* <div className="mt-4 flex justify-center space-x-4">
@@ -155,7 +155,7 @@ const LoginForm = () => {
         <p className="text-sm text-gray-600 ">
           don&apos;t have an account?
           <Link
-            href="/auth/register"
+            href="/auth/signUp"
             className="text-blue-600 hover:underline font-medium">
             Sign Up
           </Link>

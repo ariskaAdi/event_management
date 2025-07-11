@@ -13,12 +13,19 @@ import LoadingSpinner from "../atoms/loading-spinner";
 const ListEvent = () => {
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/event`);
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/event/organizer`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         console.log(res.data);
         setEvents(res.data.result);
         setLoading(false);
