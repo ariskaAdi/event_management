@@ -29,7 +29,7 @@ const Contact = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 md:px-6 py-12 bg-gray-50">
+      <div className="container mx-auto px-4 md:px-12 py-12 bg-gray-50">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* LEFT - Contact Info */}
           <div className="space-y-8">
