@@ -20,6 +20,7 @@ import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import EventCardSkeleton from "../atoms/event-card-skeleton";
 
 enum EventCategory {
   ALL = "ALL",
@@ -236,9 +237,9 @@ export default function EventCategories() {
       {/* Event Cards */}
       <div className="grid md:grid-cols-3 gap-6 mt-6">
         {isLoading ? (
-          <div className="col-span-3 flex justify-center items-center h-60">
-            <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
-          </div>
+          Array.from({ length: 6 }).map((_, index) => (
+            <EventCardSkeleton key={index} />
+          ))
         ) : events.length === 0 ? (
           <div className="col-span-3 flex flex-col justify-center items-center h-60 gap-y-4 text-center">
             <Image

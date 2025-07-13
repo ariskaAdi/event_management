@@ -15,6 +15,15 @@ export interface EventData {
   seats: number;
   category: string;
   organizerId: number;
+  vouchers: {
+    code: string;
+    discount: number;
+    discountType: string;
+    quota: number;
+    used: number;
+    startDate: string;
+    endDate: string;
+  }[];
 }
 
 export interface EventDetailProps {
@@ -35,5 +44,15 @@ export interface EventDetailProps {
       bio?: string | null;
       role: string;
     };
+    vouchers: {
+      id: number;
+      code: string;
+      discount: number;
+      discountType: string;
+      quota: number;
+      used: number;
+      startDate: string;
+      endDate: string;
+    }[];
   };
 }

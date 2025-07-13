@@ -4,17 +4,26 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { EventData } from "@/types/eventData";
 import { Edit } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { DeleteEventButton } from "./button-action";
 import LoadingSpinner from "../atoms/loading-spinner";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 const ListEvent = () => {
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
+  const [token, setToken] = useState<string | null>(null);
+
   useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!token) return;
     const fetchEvents = async () => {
       try {
         setLoading(true);
@@ -28,7 +37,6 @@ const ListEvent = () => {
         );
         console.log(res.data);
         setEvents(res.data.result);
-        setLoading(false);
       } catch (error) {
         console.error("Failed to fetch events:", error);
       } finally {
@@ -36,7 +44,7 @@ const ListEvent = () => {
       }
     };
     fetchEvents();
-  }, []);
+  }, [token]);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -55,7 +63,7 @@ const ListEvent = () => {
               <th className="px-4 py-2 text-left">PRICE</th>
               <th className="px-4 py-2 text-left">START DATE</th>
               <th className="px-4 py-2 text-left">CATEGORY</th>
-              <th className="px-4 py-2 text-left">ORGANIZER</th>
+              <th className="px-4 py-2 text-left">VOUCHER</th>
               <th className="px-4 py-2 text-right">ACTION</th>
             </tr>
           </thead>
@@ -67,31 +75,27 @@ const ListEvent = () => {
 
                 <td className="px-4 py-2">{event.location}</td>
                 <td className="px-4 py-2">{event.seats}</td>
-                <td className="px-4 py-2">
-                  Rp {event.price.toLocaleString("id-ID")}
-                </td>
-                <td className="px-4 py-2">
-                  {new Date(event.startDate).toLocaleDateString()}
-                </td>
+                <td className="px-4 py-2">{formatCurrency(event.price)}</td>
+                <td className="px-4 py-2">{formatDate(event.startDate)}</td>
                 <td className="px-4 py-2">{event.category}</td>
                 <td className="px-4 py-2">
                   <div className="flex items-center gap-2">
-                    <Avatar className="w-8 h-8">
-                      <AvatarImage
-                        src={
-                          event.organizer?.profilePicture || "/placeholder.svg"
-                        }
-                      />
-                      <AvatarFallback>
-                        {event.organizer?.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span>{event.organizer?.name}</span>
+                    {event.vouchers.length > 0 ? (
+                      <span className="text-sm font-medium text-green-600">
+                        {event.vouchers[0].code}
+                      </span>
+                    ) : (
+                      <Button variant="outline" size="sm" asChild>
+                        <Link
+                          href={`/dashboard/voucher/${event.id}`}
+                          className="text-sm text-blue-600 hover:underline">
+                          Add Voucher
+                        </Link>
+                      </Button>
+                    )}
                   </div>
                 </td>
+
                 <td className="px-4 py-2 text-right space-x-2">
                   <Button
                     variant="ghost"

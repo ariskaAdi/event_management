@@ -8,6 +8,19 @@ import { Label } from "../ui/label";
 import axios from "axios";
 import { CloudUpload } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
+import { JwtPayload } from "@/types/user";
+
+enum EventCategory {
+  MUSIC = "MUSIC",
+  SPORTS = "SPORTS",
+  EDUCATION = "EDUCATION",
+  WORKSHOP = "WORKSHOP",
+  BUSINESS = "BUSINESS",
+  TECHNOLOGY = "TECHNOLOGY",
+  ART = "ART",
+  OTHER = "OTHER",
+}
 
 const CreateForm = () => {
   const [preview, setPreview] = useState<string | null>(null);
@@ -15,10 +28,16 @@ const CreateForm = () => {
   const [isPending, setPending] = useState(false);
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
+  const [organizerId, setOrganizerId] = useState<number>();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     setToken(storedToken);
+
+    if (storedToken) {
+      const decoded: JwtPayload = jwtDecode(storedToken);
+      setOrganizerId(decoded.userId);
+    }
   }, []);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,12 +114,16 @@ const CreateForm = () => {
         </div>
         {/* Category */}
         <div>
-          <input
-            type="text"
+          <select
             name="category"
-            placeholder="Category"
-            className="mt-1 w-full border border-gray-300 rounded-md p-2 bg-white"
-          />
+            className="mt-1 w-full border border-gray-300 rounded-md p-2 bg-white">
+            <option value="">Select a category</option>
+            {Object.values(EventCategory).map((category) => (
+              <option key={category} value={category}>
+                {category.charAt(0) + category.slice(1).toUpperCase()}
+              </option>
+            ))}
+          </select>
           <div aria-live="polite" aria-atomic="true">
             <span className="text-sm text-red-500 mt-2">
               {/* {state?.error?.name} */}
@@ -200,8 +223,10 @@ const CreateForm = () => {
           <input
             type="text"
             name="organizerId"
+            value={organizerId || ""}
+            readOnly
             placeholder="Organizer ID..."
-            className="mt-1 w-full border border-gray-300 rounded-md p-2 bg-white"
+            className=" hidden"
           />
           <div aria-live="polite" aria-atomic="true">
             <span className="text-sm text-red-500 mt-2">

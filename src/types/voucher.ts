@@ -24,4 +24,9 @@ export interface IVoucher {
     createdAt: string;
     updatedAt: string;
   };
+  usages: {
+    id: number;
+    userId: number;
+    voucherId: number;
+  }[];
 }

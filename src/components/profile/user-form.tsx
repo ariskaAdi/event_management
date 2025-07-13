@@ -45,19 +45,19 @@ const UserForm = () => {
 
   return (
     <div className="flex-1 p-4 lg:p-8">
-      <Card className="w-full max-w-7xl mx-auto">
+      <Card className="w-full max-w-7xl mx-auto p-8">
         <CardHeader className="pb-4 lg:pb-6">
           <CardTitle className="text-xl lg:text-2xl font-semibold">
             Personal Information
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+        <CardContent className="flex flex-col lg:flex-row gap-8 lg:gap-12 p-4">
           {/* Left: Profile Image */}
           <div className="flex flex-col items-center gap-4 lg:w-1/3">
             <div className="relative w-40 h-40 rounded-full overflow-hidden border">
               <Image
-                src={user.profilePicture || ""}
+                src={user.profilePicture || "undraw_avatar.svg"}
                 alt="Profile Picture"
                 fill
                 className="object-cover"

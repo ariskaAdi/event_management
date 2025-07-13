@@ -8,12 +8,19 @@ import { Button } from "../ui/button";
 import { EventDetailProps } from "@/types/eventData";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { formatCurrency, formatDateDetail } from "@/lib/utils";
+import { IVoucher } from "@/types/voucher";
+import { jwtDecode } from "jwt-decode";
+import { JwtPayload } from "@/types/user";
 
 export default function TransactionCard({ event }: EventDetailProps) {
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [voucherCode, setVoucherCode] = useState("");
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!event) {
     return (
@@ -22,20 +29,32 @@ export default function TransactionCard({ event }: EventDetailProps) {
       </div>
     );
   }
-
+  const usedPoints = 0;
   const price = event.price || 0;
-  const totalPaid = quantity * price;
+  const totalBeforeDiscount = quantity * price;
+  const totalPaid = Math.max(
+    0,
+    totalBeforeDiscount - discountAmount - usedPoints
+  );
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError("");
-
     const token = localStorage.getItem("token");
+
     if (!token) {
       setError("You must be logged in to proceed.");
       setIsSubmitting(false);
       return;
     }
+
+    console.log({
+      eventId: event.id,
+      quantity,
+      totalPaid,
+      voucherCode,
+      usedPoints,
+    });
 
     try {
       await axios.post(
@@ -44,6 +63,8 @@ export default function TransactionCard({ event }: EventDetailProps) {
           eventId: event.id,
           quantity,
           totalPaid,
+          voucherCode,
+          usedPoints,
         },
         {
           headers: {
@@ -52,6 +73,15 @@ export default function TransactionCard({ event }: EventDetailProps) {
         }
       );
       console.log("Payment successful!");
+      console.log({
+        quantity,
+        price,
+        totalBeforeDiscount,
+        discountAmount,
+        usedPoints,
+        totalPaid,
+      });
+
       alert("Payment successful!");
       router.push("/payment");
     } catch (err) {
@@ -59,6 +89,70 @@ export default function TransactionCard({ event }: EventDetailProps) {
       setError("Failed to complete payment.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleCheckVoucher = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setError("You must be logged in to proceed.");
+      return;
+    }
+    const decode = jwtDecode<JwtPayload>(token);
+    const userId = decode.userId;
+
+    if (!voucherCode) return;
+
+    try {
+      setIsLoading(true);
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/voucher/${event.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // result is already an array of vouchers
+      const allVouchers = res.data.result as IVoucher[];
+
+      const validVoucher = allVouchers.find(
+        (voucher: IVoucher) =>
+          voucher.code.toLowerCase() === voucherCode.toLowerCase() &&
+          voucher.used < voucher.quota
+      );
+
+      if (!validVoucher) {
+        setError("Voucher is invalid or has expired.");
+        setDiscountAmount(0);
+        return;
+      }
+
+      const alreadyUsedByUser = validVoucher.usages.some(
+        (usage) => usage.userId === userId
+      );
+
+      if (alreadyUsedByUser) {
+        setError("Voucher has already been used.");
+        setDiscountAmount(0);
+        return;
+      }
+
+      const calculatedDiscount =
+        validVoucher.discountType === "PERCENTAGE"
+          ? Math.floor((price * quantity * validVoucher.discount) / 100)
+          : validVoucher.discount * quantity;
+
+      setDiscountAmount(calculatedDiscount);
+      setError(""); // clear error
+    } catch (error) {
+      console.log(error);
+      setError("Failed to validate voucher.");
+      setDiscountAmount(0);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,11 +181,11 @@ export default function TransactionCard({ event }: EventDetailProps) {
                       <p className="text-sm text-gray-500">
                         {event.description}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(event.startDate).toLocaleString("id-ID")}
+                      <p className="text-sm text-gray-500 font-bold">
+                        Start Date: {formatDateDetail(event.startDate)}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        {new Date(event.endDate).toLocaleString("id-ID")}
+                      <p className="text-sm text-gray-500 font-bold">
+                        End Date: {formatDateDetail(event.endDate)}
                       </p>
                     </div>
                   </div>
@@ -100,7 +194,7 @@ export default function TransactionCard({ event }: EventDetailProps) {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Price per ticket</span>
                       <span className="text-gray-900">
-                        Rp{price.toLocaleString("id-ID")}
+                        {formatCurrency(price)}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -108,18 +202,50 @@ export default function TransactionCard({ event }: EventDetailProps) {
                       <Input
                         type="number"
                         value={quantity}
+                        inputMode="numeric"
                         min={1}
                         onChange={(e) => setQuantity(Number(e.target.value))}
-                        className="w-20 text-right"
+                        className="w-40 text-right font-bold"
                       />
                     </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Voucher Code:</span>
+                      <div className="gap-2 flex flex-col">
+                        <Input
+                          type="text"
+                          value={voucherCode}
+                          onChange={(e) =>
+                            setVoucherCode(e.target.value.toUpperCase())
+                          }
+                          className="w-40 text-right font-bold "
+                          style={{ textTransform: "uppercase" }}
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          onClick={handleCheckVoucher}
+                          className="bg-green-500 hover:bg-green-600 text-white w-full cursor-pointer"
+                          disabled={isLoading}>
+                          {isLoading ? "Checking..." : "Apply"}
+                        </Button>
+                      </div>
+                    </div>
+                    {discountAmount > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-green-600">Discount</span>
+                        <span className="text-green-600">
+                          - {formatCurrency(discountAmount)}
+                        </span>
+                      </div>
+                    )}
+
                     <div className="border-t pt-3">
                       <div className="flex justify-between">
                         <span className="font-semibold text-gray-900">
                           Total Price
                         </span>
-                        <span className="font-semibold text-gray-900">
-                          Rp{totalPaid.toLocaleString("id-ID")}
+                        <span className="font-semibold text-gray-900 text-xl">
+                          {formatCurrency(totalPaid)}
                         </span>
                       </div>
                     </div>
@@ -130,8 +256,6 @@ export default function TransactionCard({ event }: EventDetailProps) {
                     </h2>
 
                     <div className="space-y-4">
-                      {/* Bisa tambahkan form input lainnya jika perlu */}
-
                       {error && (
                         <p className="text-sm text-red-500 font-medium">
                           {error}

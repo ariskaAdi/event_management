@@ -67,9 +67,6 @@ export default function TransactionStatus() {
     fetchTransactions(status);
   }, [status]);
 
-  const current = transactions[0];
-  //   const Icon = statusConfig[status].icon;
-
   return (
     <div className="w-full max-w-8xl mx-auto p-8">
       <Tabs
@@ -90,103 +87,113 @@ export default function TransactionStatus() {
         <TabsContent value={status}>
           {isLoading ? (
             <p className="text-center text-gray-500">Loading...</p>
-          ) : !current ? (
+          ) : transactions.length === 0 ? (
             <p className="text-center text-gray-500">No transactions found.</p>
           ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex justify-between items-center">
-                  <span>{current.event.title}</span>
-                  <Badge
-                    className={`flex items-center gap-1 bg-amber-50 text-${
-                      statusConfig[current.status].color
-                    }-500`}>
-                    {current.status === "WAITING_PAYMENT" &&
-                    current.expiredAt ? (
-                      <>
-                        <Clock className="h-3 w-3 text-yellow-500" />
-                        <CountdownTimer
-                          expiredAt={new Date(current.expiredAt)}
-                        />
-                      </>
-                    ) : (
-                      <>
-                        {(() => {
-                          const Icon = statusConfig[current.status].icon;
-                          return <Icon className="h-3 w-3" />;
-                        })()}
-                        <span>{statusConfig[current.status].label}</span>
-                      </>
-                    )}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  {/* LEFT */}
-                  <div className="space-y-3 text-sm text-gray-700">
-                    <p>
-                      <strong>Customer:</strong> {current.user.name}
-                    </p>
-                    <p>
-                      <strong>Email:</strong> {current.user.email}
-                    </p>
-                    <p>
-                      <strong>Location:</strong> {current.event.location}
-                    </p>
-                    <p>
-                      <strong>Start:</strong>{" "}
-                      {new Date(current.event.startDate).toLocaleString(
-                        "id-ID"
-                      )}
-                    </p>
-                    <p>
-                      <strong>End:</strong>{" "}
-                      {new Date(current.event.endDate).toLocaleString("id-ID")}
-                    </p>
-                    <p>
-                      <strong>Ticket Price:</strong> Rp
-                      {current.event.price.toLocaleString("id-ID")}
-                    </p>
-                    <p>
-                      <strong>Quantity:</strong> {current.quantity}
-                    </p>
-                  </div>
+            <div className="space-y-6">
+              {transactions.map((current) => (
+                <Card key={current.id} className="p-6">
+                  <CardHeader>
+                    <CardTitle className="flex justify-between items-center">
+                      <span>{current.event.title}</span>
+                      <Badge
+                        className={`flex items-center gap-1 bg-amber-50 text-${
+                          statusConfig[current.status].color
+                        }-500`}>
+                        {current.status === "WAITING_PAYMENT" &&
+                        current.expiredAt ? (
+                          <>
+                            <Clock className="h-3 w-3 text-yellow-500" />
+                            <CountdownTimer
+                              expiredAt={new Date(current.expiredAt)}
+                            />
+                          </>
+                        ) : (
+                          <>
+                            {(() => {
+                              const Icon = statusConfig[current.status].icon;
+                              return <Icon className="h-3 w-3" />;
+                            })()}
+                            <span>{statusConfig[current.status].label}</span>
+                          </>
+                        )}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {/* LEFT */}
+                      <div className="space-y-3 text-sm text-gray-700">
+                        <p>
+                          <strong>Customer:</strong> {current.user.name}
+                        </p>
+                        <p>
+                          <strong>Email:</strong> {current.user.email}
+                        </p>
+                        <p>
+                          <strong>Location:</strong> {current.event.location}
+                        </p>
+                        <p>
+                          <strong>Start:</strong>{" "}
+                          {new Date(current.event.startDate).toLocaleString(
+                            "id-ID"
+                          )}
+                        </p>
+                        <p>
+                          <strong>End:</strong>{" "}
+                          {new Date(current.event.endDate).toLocaleString(
+                            "id-ID"
+                          )}
+                        </p>
+                        <p>
+                          <strong>Ticket Price:</strong> Rp
+                          {current.event.price.toLocaleString("id-ID")}
+                        </p>
+                        <p>
+                          <strong>Quantity:</strong> {current.quantity}
+                        </p>
+                      </div>
 
-                  {/* RIGHT */}
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span>Subtotal</span>
-                      <span>
-                        Rp
-                        {(
-                          current.quantity * current.event.price
-                        ).toLocaleString("id-ID")}
-                      </span>
+                      {/* RIGHT */}
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between">
+                          <span>Subtotal</span>
+                          <span>
+                            Rp
+                            {(
+                              current.quantity * current.event.price
+                            ).toLocaleString("id-ID")}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Total Paid</span>
+                          <span>
+                            Rp{current.totalPaid.toLocaleString("id-ID")}
+                          </span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Transaction Date</span>
+                          <span>
+                            {new Date(current.createdAt).toLocaleString(
+                              "id-ID"
+                            )}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Total Paid</span>
-                      <span>Rp{current.totalPaid.toLocaleString("id-ID")}</span>
+                    <Separator />
+                    <div className="flex justify-end">
+                      {current.status === "WAITING_PAYMENT" && (
+                        <UploadPaymentProofForm
+                          transactionId={current.id}
+                          onSuccess={() => fetchTransactions(status)}
+                        />
+                      )}
                     </div>
-                    <div className="flex justify-between">
-                      <span>Transaction Date</span>
-                      <span>
-                        {new Date(current.createdAt).toLocaleString("id-ID")}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <Separator />
-                <div className="flex justify-end">
-                  {current.status === "WAITING_PAYMENT" ? (
-                    <UploadPaymentProofForm
-                      transactionId={current.id}
-                      onSuccess={() => fetchTransactions(status)} // refresh data
-                    />
-                  ) : null}
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           )}
         </TabsContent>
       </Tabs>

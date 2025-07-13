@@ -1,9 +1,11 @@
 import Image from "next/image";
 import React from "react";
 import { Button } from "../ui/button";
-import { Heart, MapPin, Share2, Users } from "lucide-react";
+import { MapPin, Users } from "lucide-react";
 import { EventDetailProps } from "@/types/eventData";
 import Link from "next/link";
+import { formatCurrency, formatDateDetail } from "@/lib/utils";
+import { Badge } from "../ui/badge";
 
 const EventDetail = ({ event }: EventDetailProps) => {
   if (!event) {
@@ -14,18 +16,6 @@ const EventDetail = ({ event }: EventDetailProps) => {
     );
   }
 
-  const price =
-    typeof event.price === "number"
-      ? `Rp${event.price.toLocaleString("id-ID")}`
-      : "-";
-
-  const startDate = event.startDate
-    ? new Date(event.startDate).toLocaleString("id-ID")
-    : "-";
-
-  const endDate = event.endDate
-    ? new Date(event.endDate).toLocaleString("id-ID")
-    : "-";
   return (
     <div className="container mx-auto p-4 lg:p-8">
       <div className="grid lg:grid-cols-3 gap-6 border border-dashed border-black/20 rounded-2xl p-4 items-stretch">
@@ -50,32 +40,47 @@ const EventDetail = ({ event }: EventDetailProps) => {
                 {event.title}
               </h1>
               <p className="text-gray-600">
-                {startDate} - {endDate}
+                {formatDateDetail(event.startDate)} -{" "}
+                {formatDateDetail(event.endDate)}
               </p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="icon">
-                <Heart className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon">
-                <Share2 className="h-4 w-4" />
-              </Button>
-            </div>
+            {event.vouchers.length > 0 && (
+              <div className="flex gap-2">
+                <Badge variant="secondary" className="text-amber-500">
+                  {event.vouchers[0].code}
+                </Badge>
+                <Badge variant="secondary" className="text-amber-500">
+                  {event.vouchers[0].quota - event.vouchers[0].used} left
+                </Badge>
+              </div>
+            )}
           </div>
 
           {/* Price */}
-          <div className="text-3xl font-bold text-amber-500">{price}</div>
+          <div className="text-3xl font-bold text-amber-500">
+            {formatCurrency(event.price)}
+          </div>
+
+          {/* Discount Info */}
+          {event.vouchers.length > 0 && (
+            <p className="text-sm text-gray-500">
+              Use a voucher to get a discount:{" "}
+              {event.vouchers[0].discountType === "PERCENTAGE"
+                ? `${event.vouchers[0].discount}%`
+                : formatCurrency(event.vouchers[0].discount * 1000)}
+            </p>
+          )}
 
           {/* Description */}
           <div>
-            <h3 className="text-lg font-semibold mb-2">Description</h3>
+            <h3 className="text-lg font-semibold ">Description</h3>
             <p className="text-gray-700 leading-relaxed">{event.description}</p>
           </div>
 
           {/* Description */}
           <div>
-            <h3 className="text-lg font-semibold mb-2">Capacity</h3>
-            <div className="flex items-center gap-2 mb-2">
+            <h3 className="text-lg font-semibold ">Capacity</h3>
+            <div className="flex items-center gap-2 ">
               <Users size={16} className="text-amber-500" />
               <p className="text-gray-700 leading-relaxed">{event.seats}</p>
             </div>
@@ -84,7 +89,7 @@ const EventDetail = ({ event }: EventDetailProps) => {
           {/* Location */}
           <div>
             <div>
-              <h3 className="text-lg font-semibold mb-2">Location</h3>
+              <h3 className="text-lg font-semibold ">Location</h3>
               <div className="flex items-center gap-2">
                 <MapPin size={16} className="text-amber-500" />
                 <p className="text-gray-700 leading-relaxed">

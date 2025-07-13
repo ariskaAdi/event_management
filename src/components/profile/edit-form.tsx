@@ -9,6 +9,9 @@ import axios from "axios";
 import { CloudUpload } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { EventData } from "@/types/eventData";
+import { JwtPayload } from "@/types/user";
+import { jwtDecode } from "jwt-decode";
+import LoadingSpinner from "../atoms/loading-spinner";
 
 const EditForm = () => {
   const { id: eventId } = useParams();
@@ -16,17 +19,36 @@ const EditForm = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const [isFree, setIsFree] = useState(false);
   const [isPending, setPending] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [organizerId, setOrganizerId] = useState<number>();
   const router = useRouter();
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    setToken(storedToken);
+
+    if (storedToken) {
+      const decoded: JwtPayload = jwtDecode(storedToken);
+      setOrganizerId(decoded.userId);
+    }
+  }, []);
 
   useEffect(() => {
     if (!eventId) return;
     const fetchEvent = async () => {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/event/${eventId}`
-      );
-      setEventData(res.data.event);
-      setIsFree(res.data.event.price === 0);
-      setPreview(res.data.event.picture || null);
+      try {
+        setPending(true);
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/event/${eventId}`
+        );
+        setEventData(res.data.result);
+        setIsFree(res.data.event.price === 0);
+        setPreview(res.data.event.picture || null);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setPending(false);
+      }
     };
     fetchEvent();
   }, [eventId]);
@@ -55,7 +77,10 @@ const EditForm = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/event/${eventId}`,
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       router.push("/dashboard/manage");
@@ -67,7 +92,7 @@ const EditForm = () => {
     }
   };
 
-  if (!eventData) return <p>Loading...</p>;
+  if (!eventData) return <LoadingSpinner />;
 
   return (
     <form
@@ -88,13 +113,23 @@ const EditForm = () => {
           rows={8}
           placeholder="Description"
         />
-        <input
-          type="text"
+        <select
           name="category"
           defaultValue={eventData.category}
-          placeholder="Category"
-          className="mt-1 w-full border border-gray-300 rounded-md p-2 bg-white"
-        />
+          className="mt-1 w-full border border-gray-300 rounded-md p-2 bg-white">
+          <option value="" disabled>
+            Select category
+          </option>
+          <option value="MUSIC">Music</option>
+          <option value="SPORTS">Sports</option>
+          <option value="EDUCATION">Education</option>
+          <option value="WORKSHOP">Workshop</option>
+          <option value="BUSINESS">Business</option>
+          <option value="TECHNOLOGY">Technology</option>
+          <option value="ART">Art</option>
+          <option value="OTHER">Other</option>
+        </select>
+
         <input
           type="text"
           name="location"
@@ -166,14 +201,21 @@ const EditForm = () => {
             className="mt-2 w-full border border-gray-300 rounded-md p-2 bg-white"
           />
         </div>
-
-        <input
-          type="text"
-          name="organizerId"
-          defaultValue={eventData.organizerId.toString()}
-          placeholder="Organizer ID..."
-          className="mt-1 w-full border border-gray-300 rounded-md p-2 bg-white"
-        />
+        <div>
+          <input
+            type="text"
+            name="organizerId"
+            value={organizerId || ""}
+            readOnly
+            placeholder="Organizer ID..."
+            className=" hidden"
+          />
+          <div aria-live="polite" aria-atomic="true">
+            <span className="text-sm text-red-500 mt-2">
+              {/* {state?.error?.name} */}
+            </span>
+          </div>
+        </div>
 
         <Button
           className="w-full text-white rounded-md py-2"

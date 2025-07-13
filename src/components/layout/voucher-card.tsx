@@ -17,7 +17,7 @@ import { IVoucher } from "@/types/voucher";
 import axios from "axios";
 import LoadingSpinner from "../atoms/loading-spinner";
 import { Badge } from "../ui/badge";
-import { formatDate } from "@/lib/utils";
+import { formatCurrency, formatDate } from "@/lib/utils";
 import Link from "next/link";
 
 export default function VoucherCard() {
@@ -122,21 +122,23 @@ export default function VoucherCard() {
                           </h3>
                           <Badge
                             variant="secondary"
-                            className="font-bold rounded-full">
-                            {card.quota} left
+                            className="font-bold rounded-full bg-amber-500 text-white">
+                            {card.quota - card.used} left
                           </Badge>
 
                           {card.discount && (
                             <div className="flex items-center gap-2 mb-2">
                               <span className="text-xl">Discount up to</span>
-                              <span className="text-3xl font-bold">
-                                {card.discount}
+                              <span className="text-2xl font-bold text-green-500">
+                                {card.discountType === "PERCENTAGE"
+                                  ? `${card.discount}`
+                                  : `${formatCurrency(card.discount)}`}
                               </span>
-                              <div className="w-6 h-6 bg-green-400 rounded-full flex items-center justify-center">
-                                <span className="text-md font-bold text-green-800">
-                                  {card.discountType === "FIXED" ? "K" : "%"}
-                                </span>
-                              </div>
+                              {card.discountType === "PERCENTAGE" && (
+                                <div className="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center">
+                                  %
+                                </div>
+                              )}
                             </div>
                           )}
                           <p className="text-sm opacity-90 ">

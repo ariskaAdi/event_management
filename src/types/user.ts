@@ -6,3 +6,11 @@ export type IUser = {
   profilePicture?: string | null;
   bio?: string | null;
 };
+
+export type JwtPayload = {
+  userId: number;
+  email: string;
+  role: "CUSTOMER" | "ORGANIZER";
+  iat: number;
+  exp: number;
+};
