@@ -1,5 +1,4 @@
 import TransactionCard from "@/components/layout/transaction-card";
-import axios from "axios";
 import { Metadata } from "next";
 import React from "react";
 
@@ -7,18 +6,7 @@ export const metadata: Metadata = {
   title: "Transaction | TixFlow",
 };
 
-const getEventById = async ({ params }: { params: { id: string } }) => {
-  try {
-    const { id } = await params;
-    const res = await axios(`${process.env.NEXT_PUBLIC_API_URL}/event/${id}`);
-    console.log(res.data);
-    return res.data.result;
-  } catch (error) {
-    console.log(error);
-  }
-};
-const TransactionPage = async ({ params }: { params: { id: string } }) => {
-  const event = await getEventById({ params });
+const TransactionPage = () => {
   return (
     <main className="min-h-screen flex flex-col">
       <div
@@ -34,7 +22,7 @@ const TransactionPage = async ({ params }: { params: { id: string } }) => {
         </div>
       </div>
 
-      <TransactionCard event={event} />
+      <TransactionCard />
     </main>
   );
 };

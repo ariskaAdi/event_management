@@ -27,32 +27,30 @@ export interface EventData {
 }
 
 export interface EventDetailProps {
-  event: {
+  id: number;
+  title: string;
+  description: string;
+  picture: string;
+  price: number;
+  location: string;
+  startDate: string;
+  endDate: string;
+  seats: number;
+  organizer: {
+    name: string;
+    email: string;
+    profilePicture?: string | null;
+    bio?: string | null;
+    role?: string; // optional karena tidak dikirim dari backend
+  };
+  vouchers: {
     id: number;
-    title: string;
-    description: string;
-    picture: string;
-    price: number;
-    location: string;
+    code: string;
+    discount: number;
+    discountType: string;
+    quota: number;
+    used: number;
     startDate: string;
     endDate: string;
-    seats: number;
-    organizer: {
-      name: string;
-      email: string;
-      profilePicture?: string | null;
-      bio?: string | null;
-      role: string;
-    };
-    vouchers: {
-      id: number;
-      code: string;
-      discount: number;
-      discountType: string;
-      quota: number;
-      used: number;
-      startDate: string;
-      endDate: string;
-    }[];
-  };
+  }[];
 }

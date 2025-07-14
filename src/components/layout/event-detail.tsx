@@ -1,13 +1,46 @@
+"use client";
+
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { MapPin, Users } from "lucide-react";
 import { EventDetailProps } from "@/types/eventData";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { formatCurrency, formatDateDetail } from "@/lib/utils";
 import { Badge } from "../ui/badge";
+import axios from "axios";
+import LoadingSpinner from "../atoms/loading-spinner";
 
-const EventDetail = ({ event }: EventDetailProps) => {
+const EventDetail = () => {
+  const { id: eventId } = useParams();
+  const [event, setEvent] = useState<EventDetailProps | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!eventId) return;
+
+    const fetchEvent = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/event/${eventId}`
+        );
+        setEvent(res.data.result);
+      } catch (error) {
+        console.error("Failed to fetch event:", error);
+        setEvent(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvent();
+  }, [eventId]);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   if (!event) {
     return (
       <div className="text-center text-gray-500 p-8">
@@ -19,9 +52,9 @@ const EventDetail = ({ event }: EventDetailProps) => {
   return (
     <div className="container mx-auto p-4 lg:p-8">
       <div className="grid lg:grid-cols-3 gap-6 border border-dashed border-black/20 rounded-2xl p-4 items-stretch">
-        {/* Left Column - Images */}
+        {/* Left Column - Image */}
         <div className="lg:col-span-2 h-full">
-          <div className="lg:col-span-2 h-64 lg:h-full relative rounded-lg overflow-hidden">
+          <div className="h-64 lg:h-full relative rounded-lg overflow-hidden">
             <Image
               src={event.picture}
               alt={event.title}
@@ -73,34 +106,32 @@ const EventDetail = ({ event }: EventDetailProps) => {
 
           {/* Description */}
           <div>
-            <h3 className="text-lg font-semibold ">Description</h3>
+            <h3 className="text-lg font-semibold">Description</h3>
             <p className="text-gray-700 leading-relaxed">{event.description}</p>
           </div>
 
-          {/* Description */}
+          {/* Capacity */}
           <div>
-            <h3 className="text-lg font-semibold ">Capacity</h3>
-            <div className="flex items-center gap-2 ">
+            <h3 className="text-lg font-semibold">Capacity</h3>
+            <div className="flex items-center gap-2">
               <Users size={16} className="text-amber-500" />
-              <p className="text-gray-700 leading-relaxed">{event.seats}</p>
+              <p className="text-gray-700">{event.seats}</p>
             </div>
           </div>
 
           {/* Location */}
           <div>
-            <div>
-              <h3 className="text-lg font-semibold ">Location</h3>
-              <div className="flex items-center gap-2">
-                <MapPin size={16} className="text-amber-500" />
-                <p className="text-gray-700 leading-relaxed">
-                  {event.location}
-                </p>
-              </div>
+            <h3 className="text-lg font-semibold">Location</h3>
+            <div className="flex items-center gap-2">
+              <MapPin size={16} className="text-amber-500" />
+              <p className="text-gray-700">{event.location}</p>
             </div>
           </div>
+
+          {/* Buy Button */}
           <div className="mt-auto space-y-4">
             <Button
-              className="w-full rounded-4xl cursor-pointer h-16 text-2xl "
+              className="w-full rounded-4xl cursor-pointer h-16 text-2xl"
               asChild>
               <Link href={`/transaction/${event.id}`}>Buy Tickets</Link>
             </Button>
@@ -108,7 +139,7 @@ const EventDetail = ({ event }: EventDetailProps) => {
         </div>
       </div>
 
-      {/* event organizer Section */}
+      {/* Organizer */}
       <div className="mt-2">
         <div className="p-6">
           <div className="flex items-center justify-between">
@@ -118,7 +149,7 @@ const EventDetail = ({ event }: EventDetailProps) => {
               </div>
               <div>
                 <h4 className="font-semibold text-lg uppercase">
-                  {event.organizer.role}
+                  {event.organizer.role || "ORGANIZER"}
                 </h4>
                 <p className="text-gray-600">{event.organizer.name}</p>
                 <p className="text-sm text-gray-500 mt-1">

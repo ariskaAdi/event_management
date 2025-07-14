@@ -132,8 +132,8 @@ export default function EventCategories() {
   // fungsi untuk mengambil data dari backend
   // jika all tidak mengirimkan query
   const fetchEvents = useCallback(async () => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       const query =
         selectedCategory === EventCategory.ALL
           ? ""
