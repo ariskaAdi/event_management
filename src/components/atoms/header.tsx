@@ -28,11 +28,14 @@ export function Header() {
       if (!token) return setIsLoggedIn(false);
 
       try {
-        const res = await fetch("http://localhost:4000/user/profile/get/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/user/profile/get/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!res.ok) {
           // Jika user not found atau token invalid
