@@ -87,7 +87,7 @@ const ListEvent = () => {
                     ) : (
                       <Button variant="outline" size="sm" asChild>
                         <Link
-                          href={`/dashboard/voucher/${event.id}`}
+                          href={`/dashboard/manage/voucher/${event.id}`}
                           className="text-sm text-blue-600 hover:underline">
                           Add Voucher
                         </Link>

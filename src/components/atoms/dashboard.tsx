@@ -1,16 +1,7 @@
 // components/sidebar.tsx
 "use client";
 
-import {
-  ShoppingCart,
-  BarChart3,
-  Settings,
-  ArrowLeft,
-  Menu,
-  User,
-  Bell,
-  TableProperties,
-} from "lucide-react";
+import { ArrowLeft, Menu, User, Bell, TableProperties } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
@@ -20,10 +11,7 @@ import { Button } from "../ui/button";
 const sidebarItems = [
   { icon: User, label: "Profile", href: "/dashboard/profile" },
   { icon: TableProperties, label: "Manage", href: "/dashboard/manage" },
-  { icon: ShoppingCart, label: "Order", href: "/dashboard/order" },
-  { icon: BarChart3, label: "Report", href: "/dashboard/report" },
   { icon: Bell, label: "Notification", href: "/dashboard/notification" },
-  { icon: Settings, label: "Settings", href: "/dashboard/settings" },
 ];
 
 export default function Sidebar() {

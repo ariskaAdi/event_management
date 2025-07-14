@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { MapPin, Search, X } from "lucide-react";
 import { EventData } from "@/types/eventData";
@@ -15,7 +15,7 @@ const SearchEvent = () => {
   const [results, setResults] = useState<EventData[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
       const query = `?title=${title}&location=${location}`;
@@ -29,7 +29,7 @@ const SearchEvent = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [title, location]);
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -37,7 +37,7 @@ const SearchEvent = () => {
       else setResults([]);
     }, 500);
     return () => clearTimeout(delay);
-  }, [title, location]);
+  }, [fetchEvents]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-4 sm:px-0">

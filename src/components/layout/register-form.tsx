@@ -5,14 +5,56 @@ import Link from "next/link";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        {
+          name,
+          email,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const { data } = res;
+      console.log("Login response:", data);
+
+      router.push("/auth/signIn");
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="bg-white rounded-2xl p-8 shadow-2xl">
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Register</h2>
 
-      <form className="space-y-4">
+      <form className="space-y-4" onSubmit={handleRegister}>
         <div>
           <Label htmlFor="fullName" className="text-gray-600 text-sm">
             Full Name
@@ -20,8 +62,10 @@ const RegisterForm = () => {
           <Input
             id="fullName"
             type="text"
+            value={name}
             className="mt-1 h-12 border-gray-200 rounded-lg"
             placeholder="Enter your full name"
+            onChange={(e) => setName(e.target.value)}
           />
         </div>
 
@@ -32,8 +76,10 @@ const RegisterForm = () => {
           <Input
             id="email"
             type="email"
+            value={email}
             className="mt-1 h-12 border-gray-200 rounded-lg"
             placeholder="Enter your email"
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
@@ -45,8 +91,10 @@ const RegisterForm = () => {
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
+              value={password}
               className="h-12 border-gray-200 rounded-lg pr-10"
               placeholder="Enter your password"
+              onChange={(e) => setPassword(e.target.value)}
             />
             <button
               type="button"
@@ -61,53 +109,16 @@ const RegisterForm = () => {
           </div>
         </div>
 
-        <Button className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium mt-6">
-          Sign Up
+        <Button
+          className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium mt-6"
+          type="submit"
+          disabled={loading}>
+          {loading ? "Registering..." : "Register"}
         </Button>
       </form>
 
       <div className="mt-6">
-        <div className="relative">
-          {/* <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white text-gray-500">Or Sign Up With</span>
-          </div> */}
-        </div>
-
-        {/* <div className="mt-4 flex justify-center space-x-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-10 h-10 p-0 rounded-full bg-transparent">
-                  <span className="text-red-500 font-bold">G</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-10 h-10 p-0 rounded-full bg-transparent">
-                  <span className="text-blue-600 font-bold">f</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-10 h-10 p-0 rounded-full bg-transparent">
-                  <span className="text-pink-500 font-bold">@</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-10 h-10 p-0 rounded-full bg-transparent">
-                  <span className="text-blue-400 font-bold">t</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-10 h-10 p-0 rounded-full bg-transparent">
-                  <span className="text-blue-700 font-bold">in</span>
-                </Button>
-              </div> */}
+        <div className="relative"></div>
       </div>
 
       <div className="mt-6 text-center">

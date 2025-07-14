@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Music,
   Trophy,
@@ -131,7 +131,7 @@ export default function EventCategories() {
 
   // fungsi untuk mengambil data dari backend
   // jika all tidak mengirimkan query
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     setIsLoading(true);
     try {
       const query =
@@ -152,13 +152,13 @@ export default function EventCategories() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedCategory]);
 
   // Trigger Fetch saat Kategori Berubah
   useEffect(() => {
     fetchEvents();
     setVisibleCount(6);
-  }, [selectedCategory]);
+  }, [fetchEvents]);
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -274,6 +274,7 @@ export default function EventCategories() {
               seats={event.seats}
               category={event.category}
               organizerId={event.organizerId}
+              vouchers={event.vouchers}
             />
           ))
         )}

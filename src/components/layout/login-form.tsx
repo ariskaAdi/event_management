@@ -108,47 +108,7 @@ const LoginForm = () => {
       </form>
 
       <div className="mt-6">
-        <div className="relative">
-          {/* <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200"></div>
-          </div> */}
-          {/* <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white text-gray-500">Or Sign In With</span>
-          </div> */}
-        </div>
-
-        {/* <div className="mt-4 flex justify-center space-x-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-10 h-10 p-0 rounded-full bg-transparent">
-                  <span className="text-red-500 font-bold">G</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-10 h-10 p-0 rounded-full bg-transparent">
-                  <span className="text-blue-600 font-bold">f</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-10 h-10 p-0 rounded-full bg-transparent">
-                  <span className="text-pink-500 font-bold">@</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-10 h-10 p-0 rounded-full bg-transparent">
-                  <span className="text-blue-400 font-bold">t</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-10 h-10 p-0 rounded-full bg-transparent">
-                  <span className="text-blue-700 font-bold">in</span>
-                </Button>
-              </div> */}
+        <div className="relative"></div>
       </div>
 
       <div className="mt-6 text-center">

@@ -1,3 +1,4 @@
+// app/event/[id]/page.tsx
 import EventDetail from "@/components/layout/event-detail";
 import axios from "axios";
 import { Metadata } from "next";
@@ -5,14 +6,16 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Detail Event | TixFlow",
 };
-const getEventById = async ({ params }: { params: { id: string } }) => {
+
+const getEventById = async (id: string) => {
   try {
-    const { id } = await params;
-    const res = await axios(`${process.env.NEXT_PUBLIC_API_URL}/event/${id}`);
-    console.log(res.data);
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/event/${id}`
+    );
     return res.data.result;
   } catch (error) {
-    console.log(error);
+    console.error("Failed to fetch event:", error);
+    return null;
   }
 };
 
@@ -21,7 +24,15 @@ export default async function EventDetailPage({
 }: {
   params: { id: string };
 }) {
-  const event = await getEventById({ params });
+  const event = await getEventById(params.id);
+
+  if (!event) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-gray-600">Event not found.</p>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen flex flex-col">
